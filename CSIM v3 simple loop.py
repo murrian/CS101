@@ -49,9 +49,11 @@ class CityElement():
         self.name = name
         self.description = description
         self.cost = cost
-        self.length
-        self.width
+        self.length = length
+        self.width = width
         self.stats_changed = stats_changed
+
+
 
 tier1_elements = [
     # elements that are offered at the start of the game and/or elements that offered when another tier1 is placed
@@ -62,6 +64,30 @@ tier1_elements = [
     CityElement("Coal plant", "burn coal for energy to run shit", 110, 80, 70, "energy produced+, pollution--" ),
     CityElement("road", "makes cars able to go", 10, 50, 10, "population+")
 
+]
 
+class Player():
+    # holds player name, current amount of cash, and current round
+    def __init__(self, name, cash, round_no):
+        self.name = name
+        self.cash = cash
+        self.round_no = round_no
 
-]    
+class CityStatistics():
+    #population is int, happiness is a percentage, pollution a 
+    def __init__(self, population, happiness, pollution, energy, )
+def start_game():
+    new_player = Player("get_player_name()", 150, 1)
+    els_bought = []
+    buyable_els = tier1_elements
+
+def buy_element(el_name, el_cost):
+    for element in tier1_elements:
+        if el_name == element.name:
+            if new_player.cash >= el_cost:
+                els_bought.append(element)
+                new_player.cash -= el_cost
+                buyable_els.remove(element)
+
+                
+
