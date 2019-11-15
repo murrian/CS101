@@ -36,9 +36,6 @@ while mainloop:
                 position_color = (0, 0, 0)
     #Update Pygame display.
     pygame.display.flip()
-    
-    
-
 # Finish Pygame.  
 pygame.quit()
 
@@ -52,19 +49,43 @@ class CityElement():
         self.length = length
         self.width = width
         self.stats_changed = stats_changed
-
-
+        
+    
+    #can buy an element with param name and cost if there is enough cash
+    
 
 tier1_elements = [
     # elements that are offered at the start of the game and/or elements that offered when another tier1 is placed
     # some of these can be upgraded to tier2 elements, ex: coal plant > hydroelectric dam
-    CityElement("Housing","Moderately priced living places on the outskirts of town", 50, 110, 80, "population+"),
+    CityElement("Housing", "Moderately priced living places on the outskirts of town", 50, 110, 80, "population+"),
     CityElement("Park", "A place in the city for families to play and relax", 30, 80, 70, "happiness+"),
     CityElement("Restaurant", "food place", 80, 50, 30, "happiness+"),
     CityElement("Coal plant", "burn coal for energy to run shit", 110, 80, 70, "energy produced+, pollution--" ),
     CityElement("road", "makes cars able to go", 10, 50, 10, "population+")
-
 ]
+
+
+
+class City():
+    #population is int, happiness is a percentage, pollution a 1-10 rating, 1 being good and 10 bad, energy produced per round
+    def __init__(self, population, happiness, pollution, energy, player, els_bought):
+        self.population = population
+        self.happiness = happiness
+        self.pollution = pollution
+        self.energy = energy
+        self.player = player
+        self.els_bought = els_bought
+
+    def buy_element(self, player, el_name, el_cost): 
+        #purchases an element if said element is in the list and if player has enough cash
+        for element in tier1_elements:
+            if el_name == element.name:
+                if player.cash >= el_cost:
+                    self.els_bought.append(element)
+                    player.cash -= el_cost
+                #else display "you dont have enough cash"
+        
+    def update_stats():
 
 class Player():
     # holds player name, current amount of cash, and current round
@@ -73,21 +94,25 @@ class Player():
         self.cash = cash
         self.round_no = round_no
 
-class CityStatistics():
-    #population is int, happiness is a percentage, pollution a 
-    def __init__(self, population, happiness, pollution, energy, )
-def start_game():
-    new_player = Player("get_player_name()", 150, 1)
-    els_bought = []
-    buyable_els = tier1_elements
+#test to see if city attributes can be accessed
+el_names = ""
+for el in tier1_elements:
+    el_names += el.name + ","
+print(el_names)
 
-def buy_element(el_name, el_cost):
-    for element in tier1_elements:
-        if el_name == element.name:
-            if new_player.cash >= el_cost:
-                els_bought.append(element)
-                new_player.cash -= el_cost
-                buyable_els.remove(element)
+#test if buy element works correctly
+test_city = City(1000, 50, 5, 100, Player('ian', 500, 1), [])
+print(test_city.els_bought)
+test_city.buy_element(test_city.player, tier1_elements[0].name, tier1_elements[0].cost)
+print(test_city.player.cash)
+print(test_city.els_bought)
+
+
+
+
+
+
+
+
 
                 
-
