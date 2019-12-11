@@ -2,12 +2,15 @@
 #City Simulator
 import pygame
 
+def write(msg):
+    font = pygame.font.SysFont("None", 45)
+    text = font.render(msg, True, (0, 0, 0))
+    text = text.convert_alpha
+    return text
 
 class PygView(object):
-    
-    
 
-    def __init__(self, width=500, height=500):
+    def __init__(self, width, height):
         
         """Initialize pygame, window, background, font,...
         """
@@ -18,13 +21,15 @@ class PygView(object):
         self.width = width
         self.height = height
         #self.height = width // 4
-        window = pygame.display.set_mode((self.width, self.height))
+        
         self.screen = pygame.display.set_mode((self.width, self.height), pygame.DOUBLEBUF)
         self.background = pygame.Surface(self.screen.get_size()).convert()
         self.clock = pygame.time.Clock()
         self.playtime = 0.0
         self.font = pygame.font.SysFont('mono', 20, bold=True)
-        pygame.draw.rect(self.background, (0, 200, 100), (x, y, width, height))
+        #create game board
+        pygame.draw.rect(self.background, (0, 200, 100), (x, y, 300, 300))
+        write("hello")
 
 
     def run(self):
@@ -40,6 +45,7 @@ class PygView(object):
                         running = False
 
             pygame.display.flip()
+            write("hello")
             self.screen.blit(self.background, (0, 0))
 
         pygame.quit()
@@ -50,12 +56,22 @@ class PygView(object):
 if __name__ == '__main__':
 
     # call with width of window and fps
-    PygView(640, 400).run()
+    PygView(500, 500).run()
 class CityElement():
-    def __init__(self, name, description, cost, size, stats_changed):
+    def __init__(self, name, description, cost, length, width, stats_changed):
         self.name = name
         self.description = description
         self.cost = cost
-        self.size = size
+        self.length
+        self.width
         self.stats_changed = stats_changed
+
+elements = [
+    CityElement("housing","Moderately priced living places on the outskirts of town", 50, 10, 10, "population+")
+
+]
+
+
+
+
 

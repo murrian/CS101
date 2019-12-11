@@ -1,4 +1,5 @@
 import pygame
+
 pygame.init()
 # Set size of pygame window.
 screen = pygame.display.set_mode((700,700))
@@ -13,12 +14,18 @@ screen.blit(background, (0,0))
 # Create Pygame clock object.  
 clock = pygame.time.Clock()
 
-
+# colors 
+black = (0, 0, 0)
+white = (255, 255, 255)
+red = (255, 0, 0)
+brown = (189, 143, 15)
+cyan = (87, 87, 176)
+dark_green = (38, 169, 34)
 
 def start_screen():
     screen.blit(background, (0, 0))
     font = pygame.font.SysFont("Helvetica", 50)
-    title = font.render('City Simulator', True, (255, 255, 255))
+    title = font.render('City Simulator', True, white)
     start_text = font.render('Start', True, (0, 255, 125))
     instructions_text = font.render('Instructions', True, (200, 125, 0))
     screen.blit(title, (200, 150))
@@ -30,17 +37,22 @@ def inst_screen():
     title_font = pygame.font.SysFont("Helvetica", 50)
     insts_font = pygame.font.SysFont('Helvetica', 20)
     i_title = title_font.render('Instructions', True, (0, 0, 255))
-    i_insts = insts_font.render('1.  Click and drag city elements onto the green board.', True, (255, 0, 0))
-    i_insts2 = insts_font.render('2.  Each round, You can buy elements until you run out of money.', True, (255, 0, 0))
-    i_insts3 = insts_font.render('3.  An element will increase or decrease one or more stats when placed.', True, (255, 0, 0))
+    i_insts = insts_font.render('1.  Click and drag city elements onto the green board.', True, red)
+    i_insts2 = insts_font.render('2.  Each round, You can buy elements until you run out of money.', True, red)
+    i_insts3 = insts_font.render('3.  An element will increase or decrease one or more stats when placed.', True, red)
     screen.blit(i_title, (200, 150))
     screen.blit(i_insts, (0, 250))
     screen.blit(i_insts2, (0, 350))
     screen.blit(i_insts3, (0, 450))
 
-    
-    
-
+def game_screen():
+    screen.fill((0, 0, 0))
+    pygame.draw.rect(screen, (0, 200, 100), (0, 0, 500, 500))
+    screen.blit(text,(0, 0))
+    # start sprite work
+    all_sprites_list.update()
+    #screen.fill(black)
+    all_sprites_list.draw(screen)
 class Stats():
     #population is int, happiness is a percentage, pollution a 1-10 rating, 1 being good and 10 bad, energy produced per round
     def __init__(self, population, happiness, pollution, energy):
@@ -66,7 +78,6 @@ class City():
         self.els_bought_this_round = els_bought_this_round
         self.total_els_bought = total_els_bought
         
-
     def buy_element(self, player, el_name, el_cost): 
         #purchases an element if said element is in the list and if player has enough cash
         for element in tier1_elements:
@@ -117,7 +128,6 @@ class City():
             self.buy_element(self.player, buy_el, element.cost)
             self.update_stats()
             
-
 class Player():
     # holds player name, current amount of cash, and current round
     def __init__(self, name, cash, round_no):
@@ -127,13 +137,36 @@ class Player():
     #can buy an element with param name and cost if there is enough cash
 
 class Housing(pygame.sprite.Sprite):
-    def __init__(self, color, width, height):
+    def __init__(self, width, height):
         #Call the parent sprite class
-        super().__init__()
+        super().__init__() # initializes with sprite class
+        self.image = pygame.Surface([width, height]) #creates background to blit sprite onto
+        #136-137 make bg transparent
+        self.image.fill(white) 
+        self.image.set_colorkey(white)
+        self.rect = self.image.get_rect()
+        #138-142 draw house
+        pygame.draw.rect(self.image, brown, [0, 25, width, height-25])
+        pygame.draw.polygon(self.image, cyan, [(0, 25), (50, 25), (25, 0)])
+    
+    #checks if sprite is clicked on
+    #def check_click(self, mouse_pos):
+        #if self.rect.collidepoint(mouse_pos):
+            
 
-        self.image = pygame.image.load('Housing_sprite.png')
-        
-
+class Park(pygame.sprite.Sprite):
+    def __init__(self, color, width, height):
+        super.__init__()
+        self.image = pygame.Surface([width, height])
+        self.image.fill(white)
+        self.image.set_colorkey(white)
+        #pygame.draw.rect(self.image, dark_green,  )
+#add sprite to list and set its position
+housing1 = Housing(50, 75)
+all_sprites_list = pygame.sprite.Group()
+housing1.rect.x = 100
+housing1.rect.y = 550
+all_sprites_list.add(housing1)
 
 tier1_elements = [
     # elements that are offered at the start of the game and/or elements that offered when another tier1 is placed
@@ -164,7 +197,7 @@ while mainloop:
         start_rect = pygame.draw.rect(screen, (0, 255, 125), (90, 365, 125, 75), 3)
         instructions_rect = pygame.draw.rect(screen, (200, 125, 0), (390, 365, 275, 75), 3)  
     for event in pygame.event.get():
-            
+
         # User presses QUIT-button.
         if event.type == pygame.QUIT:
             mainloop = False 
@@ -177,13 +210,22 @@ while mainloop:
             if event.button == 1:
                 if start_rect.collidepoint(pos):
                 # if user left-clicks within the start game box, clear screen and display game board.
+                    #draws game board
                     game_started = True
-                    screen.fill((0, 0, 0))
-                    pygame.draw.rect(screen, (0, 200, 100), (100, 100, 500, 500))
-                    screen.blit(text,(0, 0))
+                    game_screen()
                 if instructions_rect.collidepoint(pos):
                     game_started = True
                     inst_screen()
+                if housing1.rect.collidepoint(pos):
+                    bought_housing = Housing(50, 75)
+                    all_sprites_list.add(bought_housing)
+                    all_sprites_list.update()
+                    all_sprites_list.draw(screen)
+                    bought_housing.rect.x = pos[0]
+                    bought_housing.rect.y = pos[1]
+
+
+                
     #Update Pygame display.
     pygame.display.flip()
 # Finish Pygame.  
